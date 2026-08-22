@@ -1,0 +1,22 @@
+npm install
+npm run dev
+cd..
+npm run dev
+clear
+cd ikhlaas welfare foundation
+ikhlaas-welfare-foundation
+cd ..
+npm run dev
+clear
+cd ikhlaas-welfare-foundation
+npm run dev
+clear
+npm install framer-motion
+npm run dev
+npm install @supabase/supabase-js
+npm run dev
+npm run build
+git init
+$env:Path += ";C:\Git\cmd"
+git init
+git add .
