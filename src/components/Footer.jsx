@@ -1,9 +1,18 @@
 import { Link } from "react-router-dom";
 import { foundation } from "../data/sampleData";
+import { useFoundationSettings } from "../context/useFoundationSettings";
 import ThreadDivider from "./ThreadDivider";
 import BrandLogo from "./BrandLogo";
 
 export default function Footer() {
+  // shortName/tagline have no equivalent column in foundation_settings —
+  // they stay as fixed site copy from sampleData. Everything else here
+  // (name/phone/email/address) is admin-editable, so it comes from
+  // FoundationSettingsContext with the sampleData placeholder only as a
+  // fallback for whatever's still empty (before the admin fills it in,
+  // or while this first loads).
+  const settings = useFoundationSettings();
+
   return (
     <footer className="bg-pine-dark text-paper/90 mt-24">
       <ThreadDivider className="opacity-80" />
@@ -44,16 +53,16 @@ export default function Footer() {
         <div>
           <p className="eyebrow text-paper/60 mb-1">Contact</p>
           <ul className="space-y-2 text-sm text-paper/80 break-words">
-            <li>{foundation.phone}</li>
-            <li className="break-all">{foundation.email}</li>
-            <li>{foundation.address}</li>
+            <li>{settings.phone || foundation.phone}</li>
+            <li className="break-all">{settings.email || foundation.email}</li>
+            <li>{settings.address || foundation.address}</li>
           </ul>
         </div>
       </div>
 
       <div className="border-t border-paper/10">
         <div className="mx-auto max-w-6xl px-5 md:px-8 py-5 text-xs text-paper/50 flex flex-col sm:flex-row gap-2 justify-between">
-          <span>© {new Date().getFullYear()} {foundation.name}. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} {settings.name || foundation.name}. All rights reserved.</span>
           <span>Every figure on this site reflects verified records only.</span>
         </div>
       </div>

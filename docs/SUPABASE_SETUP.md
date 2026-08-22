@@ -61,6 +61,11 @@ whole file into a new query and click **Run**):
 8. `supabase/migrations/0008_donations_other_and_receipts.sql` — adds an
    "Other" donation category and a private `donation-receipts` storage
    bucket for optional receipt/proof uploads
+9. `supabase/migrations/0009_multi_admin.sql` — adds `is_active`/audit
+   support for multiple independent admins
+10. `supabase/migrations/0010_contact_messages.sql` — creates the
+    `contact_messages` table the public Contact page submits to, and the
+    admin-only Messages inbox reads from
 
 If a script errors partway through, read the error message — it's usually
 because a previous script wasn't run first (they depend on each other in

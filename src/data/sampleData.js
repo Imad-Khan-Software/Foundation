@@ -124,8 +124,8 @@ export const projects = [
     branch: "[Branch 1 Name]",
     summary:
       "Ongoing sponsorship covering tuition, books, and uniforms for students in [Area Name].",
-    raised: 320000,
-    goal: 500000,
+    raised: '',
+    goal: '',
   },
   {
     title: "[Project Name] — Free Health Camp",
@@ -134,8 +134,8 @@ export const projects = [
     branch: "[Branch 2 Name]",
     summary:
       "Monthly free medical camp offering consultations, medicine, and basic diagnostics.",
-    raised: 180000,
-    goal: 250000,
+    raised: 0,
+    goal: 0,
   },
   {
     title: "[Project Name] — Winter Relief Drive",
@@ -144,8 +144,8 @@ export const projects = [
     branch: "[Branch 3 Name]",
     summary:
       "Distributed blankets, warm clothing, and food packages to families ahead of winter.",
-    raised: 210000,
-    goal: 210000,
+    raised: 0,
+    goal: 0,
   },
   {
     title: "[Project Name] — Scholarship Fund",
@@ -154,8 +154,8 @@ export const projects = [
     branch: "[Branch 1 Name]",
     summary:
       "Merit and need-based scholarships awarded to students entering higher education.",
-    raised: 150000,
-    goal: 150000,
+    raised: 0,
+    goal: 0,
   },
   {
     title: "[Project Name] — Emergency Medical Aid",
@@ -164,8 +164,8 @@ export const projects = [
     branch: "[Branch 2 Name]",
     summary:
       "Rapid-response fund covering urgent surgeries and treatment costs for families in crisis.",
-    raised: 95000,
-    goal: 300000,
+    raised: 0,
+    goal: 0,
   },
   {
     title: "[Project Name] — Family Welfare Support",
@@ -174,8 +174,8 @@ export const projects = [
     branch: "[Branch 3 Name]",
     summary:
       "Monthly ration and welfare support for families facing sudden loss of income.",
-    raised: 60000,
-    goal: 200000,
+    raised: 0,
+    goal: 0,
   },
 ];
 
@@ -200,13 +200,13 @@ export const donationMethods = [
 ];
 
 export const transparency = {
-  totalDonations: 855000,
-  totalExpenses: 620000,
+  totalDonations: 0,
+  totalExpenses: 0,
   categories: [
-    { label: "Education", amount: 260000, color: "education" },
-    { label: "Health", amount: 210000, color: "health" },
-    { label: "Care", amount: 110000, color: "care" },
-    { label: "Administration", amount: 40000, color: "pine" },
+    { label: "Education", amount: 0, color: "education" },
+    { label: "Health", amount: 0, color: "health" },
+    { label: "Care", amount: 0, color: "care" },
+    { label: "Administration", amount: 0, color: "pine" },
   ],
   reports: [
     { period: "Q2 2026", label: "April – June 2026 Report" },

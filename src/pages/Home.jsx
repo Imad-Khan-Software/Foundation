@@ -8,10 +8,11 @@ import Reveal from "../components/Reveal";
 import AnimatedCounter from "../components/AnimatedCounter";
 import { MotionLink, liftHover } from "../components/MotionLink";
 import { supabase } from "../lib/supabaseClient";
+import { useFinancialSummary } from "../hooks/useFinancialSummary";
+import { useFoundationSettings } from "../context/useFoundationSettings";
 import {
   foundation,
   pillars,
-  transparency,
   activities,
   galleryItems,
 } from "../data/sampleData";
@@ -85,8 +86,17 @@ export default function Home() {
     return { ...p, cover_image_url: images[0]?.image_url || null };
   });
 
-  const remaining = transparency.totalDonations - transparency.totalExpenses;
-  const maxCategory = Math.max(...transparency.categories.map((c) => c.amount));
+  const { summary } = useFinancialSummary();
+  const settings = useFoundationSettings();
+  const remaining = summary.total_donations - summary.total_expenses;
+  const homeCategories = [
+    { label: "Education", amount: summary.education_spending, color: "education" },
+    { label: "Health", amount: summary.health_spending, color: "health" },
+    { label: "Care", amount: summary.care_spending, color: "care" },
+    { label: "Administration", amount: summary.administration_spending, color: "pine" },
+    { label: "Other", amount: summary.other_spending, color: "pine" },
+  ].filter((c) => c.amount > 0);
+  const maxCategory = Math.max(...homeCategories.map((c) => c.amount), 0);
 
   return (
     <div>
@@ -100,7 +110,7 @@ export default function Home() {
         >
           <div className="min-w-0">
             <motion.p variants={heroItem} className="eyebrow mb-4">
-              {foundation.name}
+              {settings.name || foundation.name}
             </motion.p>
             <motion.h1
               variants={heroItem}
@@ -114,7 +124,7 @@ export default function Home() {
               variants={heroItem}
               className="mt-6 text-ink/70 text-base sm:text-lg leading-relaxed max-w-xl"
             >
-              {foundation.intro}
+              {settings.aboutText || foundation.intro}
             </motion.p>
             <motion.div variants={heroItem} className="mt-8 flex flex-wrap gap-4">
               <MotionLink
@@ -163,13 +173,13 @@ export default function Home() {
         <Reveal className="rounded-2xl border border-ink/10 bg-white/60 p-8">
           <p className="eyebrow mb-3">Mission</p>
           <p className="font-display text-xl text-pine-dark leading-snug">
-            {foundation.mission}
+            {settings.mission || foundation.mission}
           </p>
         </Reveal>
         <Reveal delay={0.1} className="rounded-2xl border border-ink/10 bg-white/60 p-8">
           <p className="eyebrow mb-3">Vision</p>
           <p className="font-display text-xl text-pine-dark leading-snug">
-            {foundation.vision}
+            {settings.vision || foundation.vision}
           </p>
         </Reveal>
       </section>
@@ -244,7 +254,7 @@ export default function Home() {
               <div className="rounded-2xl bg-paper/5 border border-paper/15 p-7">
                 <p className="eyebrow text-paper/50">Total donations</p>
                 <p className="mt-2 font-display text-3xl">
-                  <AnimatedCounter value={transparency.totalDonations} prefix="Rs. " />
+                  <AnimatedCounter value={summary.total_donations} prefix="Rs. " />
                 </p>
               </div>
               <span className="hidden sm:block text-paper/30 text-2xl justify-self-center" aria-hidden="true">
@@ -253,7 +263,7 @@ export default function Home() {
               <div className="rounded-2xl bg-paper/5 border border-paper/15 p-7">
                 <p className="eyebrow text-paper/50">Total expenses</p>
                 <p className="mt-2 font-display text-3xl">
-                  <AnimatedCounter value={transparency.totalExpenses} prefix="Rs. " />
+                  <AnimatedCounter value={summary.total_expenses} prefix="Rs. " />
                 </p>
               </div>
               <span className="hidden sm:block text-paper/30 text-2xl justify-self-center" aria-hidden="true">
@@ -271,38 +281,45 @@ export default function Home() {
           {/* Category breakdown */}
           <Reveal delay={0.2} className="mt-10">
             <p className="eyebrow text-paper/50 mb-4">Spending by category</p>
-            <div className="space-y-4">
-              {transparency.categories.map((c, i) => {
-                const pct = maxCategory > 0 ? Math.round((c.amount / maxCategory) * 100) : 0;
-                return (
-                  <div key={c.label}>
-                    <div className="flex justify-between text-sm mb-1.5 text-paper/80">
-                      <span className="font-medium">{c.label}</span>
-                      <span className="font-mono text-paper/60">
-                        Rs. {c.amount.toLocaleString()}
-                      </span>
+            {homeCategories.length === 0 ? (
+              <p className="text-sm text-paper/50">
+                No verified expenses yet — the breakdown will appear here once
+                there are some.
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {homeCategories.map((c, i) => {
+                  const pct = maxCategory > 0 ? Math.round((c.amount / maxCategory) * 100) : 0;
+                  return (
+                    <div key={c.label}>
+                      <div className="flex justify-between text-sm mb-1.5 text-paper/80">
+                        <span className="font-medium">{c.label}</span>
+                        <span className="font-mono text-paper/60">
+                          Rs. {c.amount.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="h-2 rounded-full bg-paper/10 overflow-hidden">
+                        <motion.div
+                          className={
+                            c.color === "education"
+                              ? "h-full rounded-full bg-education"
+                              : c.color === "health"
+                              ? "h-full rounded-full bg-health"
+                              : c.color === "care"
+                              ? "h-full rounded-full bg-care"
+                              : "h-full rounded-full bg-paper/60"
+                          }
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${pct}%` }}
+                          viewport={{ once: true, margin: "-60px" }}
+                          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 }}
+                        />
+                      </div>
                     </div>
-                    <div className="h-2 rounded-full bg-paper/10 overflow-hidden">
-                      <motion.div
-                        className={
-                          c.color === "education"
-                            ? "h-full rounded-full bg-education"
-                            : c.color === "health"
-                            ? "h-full rounded-full bg-health"
-                            : c.color === "care"
-                            ? "h-full rounded-full bg-care"
-                            : "h-full rounded-full bg-paper/60"
-                        }
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${pct}%` }}
-                        viewport={{ once: true, margin: "-60px" }}
-                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </Reveal>
 
           <Reveal delay={0.25}>

@@ -3,8 +3,15 @@ import PillarCard from "../components/PillarCard";
 import ThreadDivider from "../components/ThreadDivider";
 import Reveal from "../components/Reveal";
 import { foundation, pillars } from "../data/sampleData";
+import { useFoundationSettings } from "../context/useFoundationSettings";
 
 export default function About() {
+  // mission/vision/about_text are admin-editable (Admin → Settings) and
+  // come from FoundationSettingsContext; intro/history/objectives have no
+  // equivalent column yet, so those stay as fixed site copy from
+  // sampleData. Falls back to the sampleData placeholder for whatever the
+  // admin hasn't filled in yet.
+  const settings = useFoundationSettings();
   return (
     <div>
       <section className="mx-auto max-w-6xl px-5 md:px-8 pt-14 pb-10">
@@ -23,7 +30,7 @@ export default function About() {
           delay={0.1}
           className="mt-6 text-ink/70 leading-relaxed max-w-2xl text-lg"
         >
-          {foundation.intro}
+          {settings.aboutText || foundation.intro}
         </Reveal>
       </section>
 
@@ -33,13 +40,13 @@ export default function About() {
         <Reveal className="rounded-2xl border border-ink/10 bg-white/60 p-8">
           <p className="eyebrow mb-3">Mission</p>
           <p className="font-display text-xl text-pine-dark leading-snug">
-            {foundation.mission}
+            {settings.mission || foundation.mission}
           </p>
         </Reveal>
         <Reveal delay={0.1} className="rounded-2xl border border-ink/10 bg-white/60 p-8">
           <p className="eyebrow mb-3">Vision</p>
           <p className="font-display text-xl text-pine-dark leading-snug">
-            {foundation.vision}
+            {settings.vision || foundation.vision}
           </p>
         </Reveal>
       </section>

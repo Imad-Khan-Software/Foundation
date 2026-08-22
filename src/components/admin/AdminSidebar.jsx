@@ -1,5 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/useAuth";
+import { supabase } from "../../lib/supabaseClient";
 import BrandLogo from "../BrandLogo";
 
 const links = [
@@ -13,6 +15,8 @@ const links = [
   { to: "/admin/donation-methods", label: "Donation Methods" },
   { to: "/admin/donations", label: "Donations" },
   { to: "/admin/expenses", label: "Expenses" },
+  { to: "/admin/financial-reports", label: "Financial Reports" },
+  { to: "/admin/messages", label: "Messages" },
   { to: "/admin/settings", label: "Foundation Settings" },
 ];
 
@@ -21,20 +25,33 @@ const links = [
 // a page that doesn't exist.
 const comingSoon = [];
 
-function NavItem({ to, label, onClick }) {
+function NavItem({ to, label, badge, onClick }) {
   return (
     <NavLink
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `block rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors ${
+        `flex items-center justify-between gap-2 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors ${
           isActive
             ? "bg-pine text-paper"
             : "text-ink/70 hover:bg-ink/5 hover:text-pine-dark"
         }`
       }
     >
-      {label}
+      {({ isActive }) => (
+        <>
+          <span>{label}</span>
+          {badge > 0 && (
+            <span
+              className={`inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold ${
+                isActive ? "bg-paper text-pine-dark" : "bg-education text-white"
+              }`}
+            >
+              {badge > 99 ? "99+" : badge}
+            </span>
+          )}
+        </>
+      )}
     </NavLink>
   );
 }
@@ -43,6 +60,30 @@ function NavItem({ to, label, onClick }) {
 // AdminLayout, so both stay in sync automatically.
 export default function AdminSidebar({ onNavigate, onSignOut }) {
   const { profile } = useAuth();
+  const location = useLocation();
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadUnreadCount() {
+      // { count: "exact", head: true } asks Postgres for just the row
+      // count, no rows — cheapest way to badge the sidebar without
+      // fetching every message on every navigation.
+      const { count, error } = await supabase
+        .from("contact_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("is_read", false);
+      if (!cancelled && !error) setUnreadMessages(count || 0);
+    }
+
+    loadUnreadCount();
+    return () => {
+      cancelled = true;
+    };
+    // Re-checks on every navigation so the badge drops as soon as an admin
+    // reads/marks messages on the Messages page and clicks elsewhere.
+  }, [location.pathname]);
 
   return (
     <div className="flex h-full flex-col">
@@ -55,7 +96,12 @@ export default function AdminSidebar({ onNavigate, onSignOut }) {
 
       <nav className="flex-1 space-y-1">
         {links.map((l) => (
-          <NavItem key={l.to} {...l} onClick={onNavigate} />
+          <NavItem
+            key={l.to}
+            {...l}
+            badge={l.to === "/admin/messages" ? unreadMessages : 0}
+            onClick={onNavigate}
+          />
         ))}
 
         {comingSoon.length > 0 && (

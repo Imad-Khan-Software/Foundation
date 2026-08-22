@@ -5,6 +5,7 @@ import Reveal from "../components/Reveal";
 import EmptyState from "../components/EmptyState";
 import { supabase } from "../lib/supabaseClient";
 import { foundation } from "../data/sampleData";
+import { useFoundationSettings } from "../context/useFoundationSettings";
 
 // donation_methods stores structured info as free-text "Label: Value"
 // lines in account_details (see src/pages/admin/DonationMethods.jsx for
@@ -57,6 +58,10 @@ function CopyRow({ label, value }) {
 }
 
 export default function Donate() {
+  // WhatsApp/email are admin-editable via Admin → Foundation Settings
+  // (see Footer.jsx for the same pattern) — falls back to the sampleData
+  // placeholder only if the admin hasn't set them yet.
+  const settings = useFoundationSettings();
   const [methods, setMethods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -167,9 +172,9 @@ export default function Donate() {
             <li>
               Send your payment reference or receipt to{" "}
               <span className="text-pine-dark font-medium">
-                {foundation.whatsapp}
+                {settings.whatsapp || foundation.whatsapp}
               </span>{" "}
-              or {foundation.email} so we can verify it.
+              or {settings.email || foundation.email} so we can verify it.
             </li>
             <li>
               Only verified donations are included in our public totals — this

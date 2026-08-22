@@ -282,7 +282,7 @@ export default function Projects() {
   const totalSpent = items.reduce((sum, p) => sum + Number(p.amount_spent || 0), 0);
 
   return (
-    <div>
+    <div className="pt-4 sm:pt-0">
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

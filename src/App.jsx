@@ -27,6 +27,8 @@ import DonationMethods from "./pages/admin/DonationMethods";
 import Donations from "./pages/admin/Donations";
 import AdminProjects from "./pages/admin/Projects";
 import AdminExpenses from "./pages/admin/Expenses";
+import FinancialReports from "./pages/admin/FinancialReports";
+import Messages from "./pages/admin/Messages";
 
 export default function App() {
   return (
@@ -68,7 +70,16 @@ export default function App() {
           <Route path="donations" element={<Donations />} />
           <Route path="projects" element={<AdminProjects />} />
           <Route path="expenses" element={<AdminExpenses />} />
+          <Route path="financial-reports" element={<FinancialReports />} />
+          <Route path="messages" element={<Messages />} />
           <Route path="settings" element={<Settings />} />
+          {/* Catches any /admin/* path that doesn't match one of the routes
+              above (typo, stale bookmark, old link, etc.) — without this,
+              React Router renders nothing at all for an unmatched nested
+              path, which looks exactly like a broken blank page even
+              though the admin is properly signed in. Sends them
+              somewhere real instead. */}
+          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
         </Route>
       </Routes>
     </AuthProvider>

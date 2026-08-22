@@ -20,3 +20,22 @@ git init
 $env:Path += ";C:\Git\cmd"
 git init
 git add .
+git commit -m "First draft"
+git branch -M main
+git remote add origin https://github.com/Imad-Khan-Software/Foundation.git`
+
+git push -u origin
+git push -u origin main
+npm run dev
+npm run build
+npm run dev
+npm run build
+npm install xlsx
+npm run dev
+npm list xlsx
+Ctrl + C
+Remove-Item -Recurse -Force node_modules\.vite
+npm run dev
+npm run build
+git init
+git add .

@@ -215,6 +215,29 @@ export default function Settings() {
     showToast("success", "Logo updated successfully.");
   }
 
+  async function handleRemoveLogo() {
+    setUploadingLogo(true);
+    const { error: saveError } = await supabase
+      .from("foundation_settings")
+      .update({ logo_url: null })
+      .eq("id", SETTINGS_ID);
+
+    setUploadingLogo(false);
+
+    if (saveError) {
+      console.error("Failed to remove logo:", saveError);
+      showToast("error", "Couldn't remove the logo. Please try again.");
+      return;
+    }
+
+    setLogoUrl(null);
+    // Same shared-context refresh as a new upload, so every consumer
+    // (admin sidebar/header, public navbar/footer) drops back to the "IK"
+    // fallback immediately instead of only on their next full reload.
+    await refreshFoundationSettings();
+    showToast("success", "Logo removed — back to the default mark.");
+  }
+
   if (loading) {
     return <p className="text-sm text-ink/50">Loading settings…</p>;
   }
@@ -277,6 +300,16 @@ export default function Settings() {
               disabled={uploadingLogo}
             />
           </label>
+          {logoUrl && (
+            <button
+              type="button"
+              onClick={handleRemoveLogo}
+              disabled={uploadingLogo}
+              className="inline-flex items-center rounded-full border border-care/30 px-4 py-2 text-sm font-semibold text-care hover:bg-care/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Remove logo
+            </button>
+          )}
         </div>
       </motion.div>
 

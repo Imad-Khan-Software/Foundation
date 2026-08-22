@@ -106,7 +106,7 @@ export default function AdminLayout() {
         )}
       </AnimatePresence>
 
-      <main className="flex-1 min-w-0 px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
+      <main className="flex-1 min-w-0 px-6 py-10 sm:px-10 lg:px-14 lg:py-14">
         <Outlet />
       </main>
     </div>

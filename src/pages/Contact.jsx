@@ -2,14 +2,20 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeading from "../components/SectionHeading";
 import Reveal from "../components/Reveal";
+import { supabase } from "../lib/supabaseClient";
 import { foundation } from "../data/sampleData";
+import { useFoundationSettings } from "../context/useFoundationSettings";
 
 const initialForm = { name: "", email: "", message: "" };
 
 export default function Contact() {
+  // Admin-editable fields (phone/whatsapp/email/address/social) come from
+  // FoundationSettingsContext, falling back to the sampleData placeholder
+  // for whatever the admin hasn't filled in yet.
+  const settings = useFoundationSettings();
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
-  const [status, setStatus] = useState("idle"); // idle | submitting | sent
+  const [status, setStatus] = useState("idle"); // idle | submitting | sent | error
 
   function validate(values) {
     const next = {};
@@ -28,19 +34,31 @@ export default function Contact() {
     setForm((f) => ({ ...f, [name]: value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const validation = validate(form);
     setErrors(validation);
     if (Object.keys(validation).length > 0) return;
 
     setStatus("submitting");
-    // Phase 1 has no backend yet — this simulates a submission so the
-    // form's states (loading / success) can be reviewed and tested now.
-    setTimeout(() => {
-      setStatus("sent");
-      setForm(initialForm);
-    }, 700);
+    // Lands in `contact_messages` (see supabase/migrations/
+    // 0010_contact_messages.sql) — anyone can insert, but only an
+    // authorized admin can ever read it back, from the new Messages page
+    // in the admin panel.
+    const { error } = await supabase.from("contact_messages").insert({
+      name: form.name.trim(),
+      email: form.email.trim(),
+      message: form.message.trim(),
+    });
+
+    if (error) {
+      console.error("Failed to send contact message:", error);
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sent");
+    setForm(initialForm);
   }
 
   return (
@@ -69,19 +87,19 @@ export default function Contact() {
             <dl className="mt-5 space-y-3 text-sm text-ink/70">
               <div className="flex gap-3">
                 <dt className="text-ink/40 w-20 shrink-0">Phone</dt>
-                <dd>{foundation.phone}</dd>
+                <dd>{settings.phone || foundation.phone}</dd>
               </div>
               <div className="flex gap-3">
                 <dt className="text-ink/40 w-20 shrink-0">WhatsApp</dt>
-                <dd>{foundation.whatsapp}</dd>
+                <dd>{settings.whatsapp || foundation.whatsapp}</dd>
               </div>
               <div className="flex gap-3">
                 <dt className="text-ink/40 w-20 shrink-0">Email</dt>
-                <dd>{foundation.email}</dd>
+                <dd>{settings.email || foundation.email}</dd>
               </div>
               <div className="flex gap-3">
                 <dt className="text-ink/40 w-20 shrink-0">Address</dt>
-                <dd>{foundation.address}</dd>
+                <dd>{settings.address || foundation.address}</dd>
               </div>
             </dl>
           </div>
@@ -89,9 +107,9 @@ export default function Contact() {
           <div className="rounded-2xl border border-ink/10 bg-white/60 p-6">
             <p className="eyebrow mb-3">Follow along</p>
             <ul className="space-y-1.5 text-sm text-pine-dark">
-              <li>{foundation.social.facebook}</li>
-              <li>{foundation.social.instagram}</li>
-              <li>{foundation.social.youtube}</li>
+              <li>{settings.socialFacebook || foundation.social.facebook}</li>
+              <li>{settings.socialInstagram || foundation.social.instagram}</li>
+              <li>{settings.socialYoutube || foundation.social.youtube}</li>
             </ul>
           </div>
         </Reveal>
@@ -221,6 +239,12 @@ export default function Contact() {
               >
                 {status === "submitting" ? "Sending…" : "Send message"}
               </button>
+              {status === "error" && (
+                <p role="alert" className="text-sm text-care">
+                  Something went wrong sending your message. Please try
+                  again, or reach us directly using the details alongside.
+                </p>
+              )}
               </motion.form>
             )}
           </AnimatePresence>

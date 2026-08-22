@@ -16,26 +16,52 @@ const SETTINGS_ID = 1;
 export function FoundationSettingsProvider({ children }) {
   const [logoUrl, setLogoUrl] = useState(null);
   const [name, setName] = useState(null);
+  // Everything else from the settings row, grouped separately from
+  // logoUrl/name above so existing consumers (BrandLogo.jsx) that only
+  // destructure { logoUrl, name } keep working unchanged.
+  const [aboutText, setAboutText] = useState(null);
+  const [mission, setMission] = useState(null);
+  const [vision, setVision] = useState(null);
+  const [phone, setPhone] = useState(null);
+  const [whatsapp, setWhatsapp] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [socialFacebook, setSocialFacebook] = useState(null);
+  const [socialInstagram, setSocialInstagram] = useState(null);
+  const [socialYoutube, setSocialYoutube] = useState(null);
+  const [foundingYear, setFoundingYear] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     const { data, error } = await supabase
       .from("foundation_settings")
-      .select("logo_url, name")
+      .select("*")
       .eq("id", SETTINGS_ID)
       .maybeSingle();
 
     if (error) {
       // Branding is non-critical — on failure every consumer just keeps
-      // rendering the "IK" fallback mark, so this must never block the
-      // public site or the admin panel from loading.
-      console.error("Failed to load foundation branding:", error);
+      // rendering its own fallback (BrandLogo's "IK" mark, or whatever
+      // placeholder each public page chooses), so this must never block
+      // the public site or the admin panel from loading.
+      console.error("Failed to load foundation settings:", error);
       return;
     }
 
     if (data) {
       setLogoUrl(data.logo_url || null);
       setName(data.name || null);
+      setAboutText(data.about_text || null);
+      setMission(data.mission || null);
+      setVision(data.vision || null);
+      setPhone(data.phone || null);
+      setWhatsapp(data.whatsapp || null);
+      setEmail(data.email || null);
+      setAddress(data.address || null);
+      setSocialFacebook(data.social_facebook || null);
+      setSocialInstagram(data.social_instagram || null);
+      setSocialYoutube(data.social_youtube || null);
+      setFoundingYear(data.founding_year || null);
     }
   }, []);
 
@@ -55,7 +81,24 @@ export function FoundationSettingsProvider({ children }) {
 
   return (
     <FoundationSettingsContext.Provider
-      value={{ logoUrl, name, loading, refresh, setLogoUrl }}
+      value={{
+        logoUrl,
+        name,
+        aboutText,
+        mission,
+        vision,
+        phone,
+        whatsapp,
+        email,
+        address,
+        socialFacebook,
+        socialInstagram,
+        socialYoutube,
+        foundingYear,
+        loading,
+        refresh,
+        setLogoUrl,
+      }}
     >
       {children}
     </FoundationSettingsContext.Provider>
