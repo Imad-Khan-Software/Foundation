@@ -1,23 +1,36 @@
-# React + Vite
+# Ikhlass Welfare Foundation Portal 🤲❤️
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A modern, responsive web portal built for the Ikhlass Welfare Foundation to showcase public information, community projects, and financial transparency tracking. 
 
-Currently, two official plugins are available:
+🔗 **Live Demo:** https://ikhlaaswelfarefoundation.netlify.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Public Information Sections:** Clear, accessible layouts sharing the foundation's core mission, community outreach programs, and organizational values.
+* **Project Displays:** Dedicated showcases highlighting active charitable campaigns, welfare initiatives, and on-ground execution milestones.
+* **Financial Transparency Tracking:** Structured components designed to communicate donation utilization and operational transparency to donors and stakeholders.
+* **Responsive Frontend Design:** Built using modern styling frameworks to ensure seamless viewing across mobile, tablet, and desktop viewports.
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 🛠️ Built With
 
-// For adding admins
+* **React & Vite:** Fast, component-driven frontend architecture optimized for performance and rapid hot-module replacement.
+* **Tailwind CSS:** Utility-first styling framework used to create clean layouts, accessible UI components, and adaptive designs.
+* **Supabase:** Secure backend service integration handling database schemas, admin authentication records, and user management rules.
+* **Netlify:** Continuous deployment platform ensuring reliable hosting and instant updates.
 
-('UUID-2', 'admin2@example.com', 'Admin 2', 'admin', true),
-('UUID-3', 'admin3@example.com', 'Admin 3', 'admin', true),
-('UUID-4', 'admin4@example.com', 'Admin 4', 'admin', true),
-('UUID-5', 'admin5@example.com', 'Admin 5', 'admin', true);
+---
+
+## 📂 Project Structure
+
+```text
+├── src/
+│   ├── components/       # Reusable UI components (Navbar, Footer, Modals)
+│   ├── pages/            # View components (Home, Projects, Transparency, Admin)
+│   ├── App.jsx           # Main application routing and state hub
+│   └── main.jsx          # React DOM entry point
+├── public/               # Static assets, logos, and images
+└── index.html            # Main HTML document template
